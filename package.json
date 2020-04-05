@@ -1,6 +1,6 @@
 {
   "name": "iterate-anything",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Iterate anything with a same interface.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
