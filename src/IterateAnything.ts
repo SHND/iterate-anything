@@ -4,14 +4,14 @@ import {
 } from './Types';
 
 import {
+    isScalar,
+    isString,
+    isArray,
+    isSet,
+    isMap,
     isIterable,
     isFunction,
     isObject,
-    isMap,
-    isSet,
-    isArray,
-    isString,
-    isScalar,
 } from './utilities';
 
 export class IterateAnything {
@@ -32,6 +32,11 @@ export class IterateAnything {
         this.values = [];
     }
 
+    /**
+     * next method for Scalar Types
+     * @param {any} val is value passed to iterator next method
+     * @returns {IteratorItem}
+     */
     private scalarNext(val?: any): IteratorItem {
         const value = this.target;
 
@@ -47,6 +52,11 @@ export class IterateAnything {
         return output;
     }
 
+    /**
+     * next method for String
+     * @param {any} val is value passed to iterator next method
+     * @returns {IteratorItem}
+     */
     private stringNext(val?: any): IteratorItem {
         const value = this.target[this.index];
 
@@ -62,6 +72,11 @@ export class IterateAnything {
         return output;
     }
 
+    /**
+     * next method for Array
+     * @param {any} val is value passed to iterator next method
+     * @returns {IteratorItem}
+     */
     private arrayNext(val?: any): IteratorItem {
         const value = this.target[this.index];
 
@@ -76,7 +91,12 @@ export class IterateAnything {
 
         return output;
     }
-
+    
+    /**
+     * next method for Set
+     * @param {any} val is value passed to iterator next method
+     * @returns {IteratorItem}
+     */
     private setNext(val?: any): IteratorItem {
         const value = this.values[this.index];
 
@@ -92,6 +112,11 @@ export class IterateAnything {
         return output;
     }
 
+    /**
+     * next method for Map
+     * @param {any} val is value passed to iterator next method
+     * @returns {IteratorItem}
+     */
     private mapNext(val?: any): IteratorItem {
         const key = this.keys[this.index]
         const value = this.target.get(key)
@@ -108,6 +133,11 @@ export class IterateAnything {
         return output;
     }
 
+    /**
+     * next method for Iterator
+     * @param {any} val is value passed to iterator next method
+     * @returns {IteratorItem}
+     */
     private iteratorNext(val?: any): IteratorItem {
         const { value, done } = this.target.next(val);
 
@@ -123,6 +153,11 @@ export class IterateAnything {
         return output;
     }
 
+    /**
+     * next method for objects
+     * @param {any} val is value passed to iterator next method
+     * @returns {IteratorItem}
+     */
     private objectNext(val?: any): IteratorItem {
         const key = this.keys[this.index];
         const value = this.target[key];
@@ -139,6 +174,10 @@ export class IterateAnything {
         return output;
     }
 
+    /**
+     * Native iterator
+     * @returns {{ next: (val?: any) => IteratorItem }}
+     */
     [Symbol.iterator](): { next: (val?: any) => IteratorItem } {
         if (isScalar(this.target)) {
             return { next: this.scalarNext.bind(this) }     
@@ -166,6 +205,11 @@ export class IterateAnything {
 
 }
 
+/**
+ * Create IterateAnything iterator object.
+ * This is simply a wrapper for IterateAnything
+ * @param {any} target to iterate
+ */
 export function itany(target: any): IterateAnything {
     return new IterateAnything(target);
 }
