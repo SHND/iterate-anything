@@ -15,18 +15,18 @@ npm install iterate-anything
 ## Usage
 
 ```javascript
-import { itany } from 'iterate-anything';
+import { itany } from 'iterate-anything'
 
 for (let [value] of itany(1)) {
-    console.log(value);     // prints 1
+    console.log(value)     // prints 1
 }
 
 for (let [value] of itany([1, 2, 3])) {
-    console.log(value);     // prints 1, 2, 3
+    console.log(value)     // prints 1, 2, 3
 }
 
 for (let [value, key] of itany({a: 1, b: 2, c: 3})) {
-    console.log(`${key}:${value}`);    // prints a:1 b:2 c:3
+    console.log(`${key}:${value}`)    // prints a:1 b:2 c:3
 }
 ```
 
@@ -41,7 +41,7 @@ In each iteration, there are 4 pieces of data passed back as an array.
 import { itany } from 'iterate-anything';
 
 for (let [value, key, passedValue, type] of itany({a: 1, b: 2, c: 3})) {
-    console.log(value, key, passedValue, type);
+    console.log(value, key, passedValue, type)
 }
 ```
 
@@ -52,9 +52,163 @@ This will print below:
 3 c undefined 4
 ```
 
-The third parameter *passedValue* is whatever method `next()` is being called with. Here since we're using `for (... of ...)` this value is undefined.
+First index (`value`) is the final value of iterable.
 
-Type 4 is for Type List. If you're using TypeScript this is `TargetType.LIST`.
+Second index (`key`) is the key, index or unique value. Beware that although *itany* pass you an incremental keys for forexample Sets, this doesn't mean Sets have order. This order theorically can be changed next time you call itany and iterate over it. But I found it handy to have a unique key always passed back.
+
+Third index (`passedValue`) is whatever method `next()` is being called with. Here since we're using `for (... of ...)` this value is undefined, but if you get the native iterator using `const iterator = itany(target)[Symbol.iterator]()`, when calling the next method with a parameter, `passedValue` would be that parameter.
+
+Fourth index (`type`) is *itany* type. For example here *4* means LISTS. If you're using TypeScript this is `TargetType.LIST`.
+
+## Targets
+
+### Array
+
+Array targets in *itany* are considers Lists.
+
+The key for each item when iterator over arrays is an index of that item.
+
+Type for Array is `TargetType.LIST`.
+
+```javascript
+for (let [value, index] of itany([10, 11, 12])) {
+    console.log(value, index)
+}
+
+/* Prints:
+    10 0
+    11 1
+    12 2
+*/
+```
+
+### String
+
+String targets in *itany* are considers Lists.
+
+The key for each item when iterator over a String is an index of the character.
+
+Type for String is `TargetType.LIST`.
+
+```javascript
+for (let [value, index] of itany("Sam")) {
+    console.log(value, index)
+}
+
+/* Prints:
+    S 0
+    a 1
+    m 2
+*/
+```
+
+### Object
+
+Object targets in *itany* are considers Maps.
+
+The key for each item when iterator over objects is the property name on that object and value is the value for that property.
+
+Keep in mind that, everytime you iterate over an object, the order of values showing up can theorically changes.
+
+Type for Object is `TargetType.MAP`.
+
+```javascript
+for (let [value, key] of itany({a: 1, b: 2, c: 3})) {
+    console.log(value, key)
+}
+
+/* Prints:
+    1 a
+    2 b
+    3 c
+*/
+```
+
+### Map
+
+The key for each item when iterator over Map is the key on that Map and value is the value for that key.
+
+Keep in mind that, everytime you iterate over a Map, the order of items showing up can theorically changes.
+
+Type for Map is `TargetType.MAP`.
+
+```javascript
+const map = new Map();
+map.set('a', 10)
+map.set('b', 11)
+
+for (let [value, key] of itany(map)) {
+    console.log(value, key)
+}
+
+/* Prints:
+    10 a
+    11 b
+*/
+```
+
+### Set
+
+Keys when iterating Sets are unique incremental indexes start from 0, but this is only for convenience since Set items don't have any order and this should'nt be confused with indexes.
+
+Keep in mind that, everytime you iterate over a Set, the order of items showing up can theorically changes.
+
+Type for Set is `TargetType.SET`.
+
+```javascript
+const map = new Set();
+map.add(10)
+map.add(11)
+
+for (let [value] of itany(map)) {
+    console.log(value)
+}
+
+/* Prints:
+    10
+    11
+*/
+```
+
+### Native Iterators
+
+Keys when iterating over JavaScript native Itarators are unique incremental indexes start from 0 in order of the values show up.
+
+Type for Set is `TargetType.ITERATOR`.
+
+```javascript
+const map = new Map();
+map.set('a', 10)
+map.set('b', 11)
+const iterator = map.values()
+
+for (let [value, key] of itany(iterator)) {
+    console.log(value, key)
+}
+
+/* Prints:
+    10 0
+    11 1
+*/
+```
+
+### *null*, *undefined*, *NaN*, *number*, *bigint*, *boolean*, *Regex*, *WeakMap*, *WeakSet*, *Promise* and *Function*
+
+These are targets which *itany* considers Scalar. These are: *null*, *undefined*, *NaN*, *number*, *bigint*, *boolean*, *Regex*, *WeakMap*, *WeakSet*, *Promise* and *Function*.
+
+These targets will always have one value when iterate over and the key for that item would be *0*.
+
+Type for Scalars is `TargetType.SCALAR`.
+
+```javascript
+for (let [value] of itany(12)) {
+    console.log(value)
+}
+
+/* Prints:
+    12
+*/
+```
 
 ## Item Types
 
@@ -70,7 +224,7 @@ TargetType.ITERATOR;    // Native Iterator
 
 ## TypeScript
 
-If you are using iterate-anything with TypeScript, you need to add `--downlevelIteration`.
+If you are using iterate-anything with TypeScript, you need to add `--downlevelIteration` switch to tsc.
 
 ```bash
 tsc index.tsc --downlevelIteration
@@ -78,12 +232,12 @@ tsc index.tsc --downlevelIteration
 
 ## Get native Iterator
 ```javascript
-import { itany } from 'iterate-anything';
+import { itany } from 'iterate-anything'
 
-const iterator = itany([1, 2, 3])[Symbol.iterator]();
+const iterator = itany([1, 2, 3])[Symbol.iterator]()
 
-const { value: [value1], done: done1 } = iterator.next();
-const { value: [value2], done: done2 } = iterator.next();
-const { value: [value3], done: done3 } = iterator.next();
-const { value: [value4], done: done4 } = iterator.next();
+const { value: [value1], done: done1 } = iterator.next()   // value: 1         done: false 
+const { value: [value2], done: done2 } = iterator.next()   // value: 2         done: false
+const { value: [value3], done: done3 } = iterator.next()   // value: 3         done: false
+const { value: [value4], done: done4 } = iterator.next()   // value: undefined  done: true
 ```
