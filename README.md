@@ -52,13 +52,13 @@ This will print below:
 3 c undefined 4
 ```
 
-First index (`value`) is the final value of iterable.
+- First index (`value`) is the final value of iterable.
 
-Second index (`key`) is the key, index or unique value. Beware that although *itany* pass you an incremental keys for forexample Sets, this doesn't mean Sets have order. This order theorically can be changed next time you call itany and iterate over it. But I found it handy to have a unique key always passed back.
+- Second index (`key`) is the key, index or unique value. Beware that although *itany* pass you an incremental keys for forexample Sets, this doesn't mean Sets have order. This order theorically can be changed next time you call itany and iterate over it. But I found it handy to have a unique key always passed back.
 
-Third index (`passedValue`) is whatever method `next()` is being called with. Here since we're using `for (... of ...)` this value is undefined, but if you get the native iterator using `const iterator = itany(target)[Symbol.iterator]()`, when calling the next method with a parameter, `passedValue` would be that parameter.
+- Third index (`passedValue`) is whatever method `next()` is being called with. Here since we're using `for (... of ...)` this value is undefined, but if you get the native iterator using `const iterator = itany(target)[Symbol.iterator]()`, when calling the next method with a parameter, `passedValue` would be that parameter.
 
-Fourth index (`type`) is *itany* type. For example here *4* means LISTS. If you're using TypeScript this is `TargetType.LIST`.
+- Fourth index (`type`) is *itany* type. For example here *4* means LISTS. If you're using TypeScript this is `TargetType.LIST`.
 
 ## Targets
 
