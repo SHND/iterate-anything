@@ -32,7 +32,7 @@ export class IterateAnything {
         this.values = [];
     }
 
-    private scalarNext(val: any): IteratorItem {
+    private scalarNext(val?: any): IteratorItem {
         const value = this.target;
 
         const output: IteratorItem = {
@@ -47,7 +47,7 @@ export class IterateAnything {
         return output;
     }
 
-    private stringNext(val: any): IteratorItem {
+    private stringNext(val?: any): IteratorItem {
         const value = this.target[this.index];
 
         const output: IteratorItem = {
@@ -62,7 +62,7 @@ export class IterateAnything {
         return output;
     }
 
-    private arrayNext(val: any): IteratorItem {
+    private arrayNext(val?: any): IteratorItem {
         const value = this.target[this.index];
 
         const output: IteratorItem = {
@@ -77,7 +77,7 @@ export class IterateAnything {
         return output;
     }
 
-    private setNext(val: any): IteratorItem {
+    private setNext(val?: any): IteratorItem {
         const value = this.values[this.index];
 
         const output: IteratorItem = {
@@ -92,7 +92,7 @@ export class IterateAnything {
         return output;
     }
 
-    private mapNext(val: any): IteratorItem {
+    private mapNext(val?: any): IteratorItem {
         const key = this.keys[this.index]
         const value = this.target.get(key)
 
@@ -108,7 +108,7 @@ export class IterateAnything {
         return output;
     }
 
-    private iteratorNext(val: any): IteratorItem {
+    private iteratorNext(val?: any): IteratorItem {
         const { value, done } = this.target.next(val);
 
         const output: IteratorItem = {
@@ -123,7 +123,7 @@ export class IterateAnything {
         return output;
     }
 
-    private objectNext(val: any): IteratorItem {
+    private objectNext(val?: any): IteratorItem {
         const key = this.keys[this.index];
         const value = this.target[key];
 
@@ -139,7 +139,7 @@ export class IterateAnything {
         return output;
     }
 
-    [Symbol.iterator](): { next: (val: any) => IteratorItem } {
+    [Symbol.iterator](): { next: (val?: any) => IteratorItem } {
         if (isScalar(this.target)) {
             return { next: this.scalarNext.bind(this) }     
         } else if (isString(this.target)) {
